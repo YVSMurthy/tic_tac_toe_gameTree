@@ -21,83 +21,59 @@ export class GameTreeClassifier {
 
     // mini-max algorithm ----------------------------------------------------------------------------------------------
 
-    minimax(player = -1, depth = 2) {
-        // base case
-        // if depth is 0, last level, then calculate the winner assignment values
-        if (depth == 0) {
-            let is_x = this.board.checkWinner(1);
-            let is_o = this.board.checkWinner(-1);
-            return (is_x == 1) ? 1 : (is_o == -1) ? -1 : 0;
+    minimax(player = -1, depth = 3) {
+        // Base case if depth is 0 or game is over
+        let is_x = this.board.checkWinner(1);
+        let is_o = this.board.checkWinner(-1);
+        if (is_x == 1) return [1, depth]; // X wins
+        if (is_o == -1) return [-1, depth]; // O wins
+        if (this.board.isOver() || depth == 0) return [0, depth]; // Draw or max depth reached
+
+        // Initialize variables for minimax
+        let bestVal, bestDepth;
+        if (player === -1) { // Minimize for O
+            bestVal = 2; // values limited to -1,0,1 so max 2 works
+            bestDepth = -1;
+        } else { // Maximize for X
+            bestVal = -2; // limited to -1,0,1 so -2 works
+            bestDepth = -1;
         }
 
-        else {
-            // if there is already a winner
-            let is_x = this.board.checkWinner(1);
-            let is_o = this.board.checkWinner(-1);
-            if (is_x == 1) {
-                return 1;
-            }
-            else if (is_o == -1) {
-                return -1;
-            }
+        // Iterate through all possible moves
+        for (let i = 0; i < this.n; i++) {
+            for (let j = 0; j < this.n; j++) {
+                if (this.board.getElem(i, j) == 0) {
+                    // Simulate move
+                    this.board.updateBoard(i, j, player);
 
-            // gave over with a draw
-            if (this.board.isOver()) {
-                return 0;
-            }
+                    // Recursively calculate value and depth for the move
+                    let [currVal, currDepth] = this.minimax(-player, depth - 1);
 
-            // game not ended till now
-            // min case (O chance)
-            if (player == -1) {
-                let min_val = 2; // as value limited to -1, 0, 1 so assignment to 2 works
-                for (let i = 0; i < this.n; i++) {
-                    for (let j = 0; j < this.n; j++) {
-                        if (this.board.getElem(i,j) == 0) {
-                            // if empty, update the board
-                            this.board.updateBoard(i, j, -1);
+                    // Restore board state
+                    this.board.updateBoard(i, j, 0);
 
-                            // recursively call minimax function with next player
-                            let curr_val = this.minimax(1, depth-1);
-                            if (curr_val < min_val) {
-                                min_val = curr_val;
-                                this.bestMove.row = i;
-                                this.bestMove.col = j;
-                            }
-
-                            // reverting back the changes to the board
-                            this.board.updateBoard(i, j, 0);
+                    if (player === -1) {
+                        // for min, update if better move found, or maybe can prolongue the game
+                        if (currVal < bestVal || (currVal === bestVal && currDepth > bestDepth)) {
+                            bestVal = currVal;
+                            bestDepth = currDepth;
+                            this.bestMove.row = i;
+                            this.bestMove.col = j;
+                        }
+                    } else {
+                        // for max also, update if better move found, or maybe can prolongue the game
+                        if (currVal > bestVal || (currVal === bestVal && currDepth > bestDepth)) {
+                            bestVal = currVal;
+                            bestDepth = currDepth;
+                            this.bestMove.row = i;
+                            this.bestMove.col = j;
                         }
                     }
                 }
-
-                return min_val;
-            }
-
-            else {
-                let max_val = -2; // as value limited to -1, 0, 1 so assignment to -2 works
-                for (let i = 0; i < this.n; i++) {
-                    for (let j = 0; j < this.n; j++) {
-                        if (this.board.getElem(i,j) == 0) {
-                            // if empty, update the board
-                            this.board.updateBoard(i, j, 1);
-
-                            // recursively call minimax function with next player
-                            let curr_val = this.minimax(-1, depth-1);
-                            if (curr_val > max_val) {
-                                max_val = curr_val;
-                                this.bestMove.i = i;
-                                this.bestMove.j = j;
-                            }
-
-                            // reverting back the changes to the board
-                            this.board.updateBoard(i, j, 0);
-                        }
-                    }
-                }
-
-                return max_val;
             }
         }
+
+        return [bestVal, bestDepth];
     }
 
     // --------------------------------------------------------------------------------------------------------------------
