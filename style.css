@@ -42,27 +42,12 @@ main {
     cursor: pointer;
 }
 
-#options {
-    height: 80%;
-    width: 15%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7%;
-}
-
-.order {
-    width: 100%;
-    padding: 10px 5px;
-    border-radius: 6px;
-    background-color: antiquewhite;
-    font-size: 20px;
-}
-
-.order:hover {
-    box-shadow: 0 0 5px #555555;
-    background-color: rgb(246, 224, 194);
-    cursor: pointer;
+#winner {
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color: #e4e4e4;
+    position: absolute;
+    font-size: 50px;
+    display: none;
 }

@@ -6,11 +6,13 @@ import { GameTreeClassifier } from './gameTreeClassifier.js';
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
+let winnerName = document.getElementById("winner");
 
 // making the tic tac toe board design ---------------------------------------------------------------------------------
 
 let grid = new Grid(50, 50, 500, 500);
-let gridLines = grid.getGridLines();
+let n = 3;
+let gridLines = grid.getGridLines(n);
 ctx.lineWidth = 3;
 
 ctx.moveTo(gridLines.l1.x1, gridLines.l1.y1);
@@ -35,7 +37,6 @@ let cursor = {
     y: 0
 }
 let chance = 1
-let n = 3;
 
 let board = (new Board(n)); 
 
@@ -79,12 +80,16 @@ canvas.addEventListener('mousedown', function addSymbol() {
             // if winner, then stop the game and declare winner
             if (board.checkWinner(1) != 0) {
                 console.log("Winner is Player 1");
+                winnerName.textContent = "The winner is Player 1";
+                winnerName.style.display = 'block';
                 canvas.removeEventListener('mousedown',addSymbol)
                 return;
             }
             // if the game draws
             else if (board.isOver()) {
                 console.log("Draw");
+                winnerName.textContent = "DRAW";
+                winnerName.style.display = 'block';
                 canvas.removeEventListener('mousedown',addSymbol)
                 return;
             }
@@ -96,7 +101,7 @@ canvas.addEventListener('mousedown', function addSymbol() {
                 // find the best move for current scenario
                 let gameTreeClassifier = new GameTreeClassifier(board.board, n);
                 // calculating best move based on minimax
-                gameTreeClassifier.minimax();
+                gameTreeClassifier.alphabeta();
                 let bestMove = gameTreeClassifier.getBestMoves();
 
                 let shape2 = new Circle(50+(bestMove.col*grid.width)/3, 50+(grid.width*bestMove.row)/3, grid.width/3);
@@ -113,12 +118,16 @@ canvas.addEventListener('mousedown', function addSymbol() {
                 // if winner, then stop the game and declare winner
                 if (board.checkWinner(-1) != 0) {
                     console.log("Winner is Computer");
+                    winnerName.textContent = "The winner is Computer";
+                    winnerName.style.display = 'block';
                     canvas.removeEventListener('mousedown',addSymbol)
                     return;
                 }
                 // if the game draws
                 else if (board.isOver()) {
                     console.log("Draw");
+                    winnerName.textContent = "DRAW";
+                    winnerName.style.display = 'block';
                     canvas.removeEventListener('mousedown',addSymbol)
                     return;
                 }
@@ -128,4 +137,3 @@ canvas.addEventListener('mousedown', function addSymbol() {
 })
 
 // ---------------------------------------------------------------------------------------------------------------------
-// logic for circle's chance
