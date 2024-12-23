@@ -79,17 +79,19 @@ canvas.addEventListener('mousedown', function addSymbol() {
             // check if cross wins
             // if winner, then stop the game and declare winner
             if (board.checkWinner(1) != 0) {
-                console.log("Winner is Player 1");
                 winnerName.textContent = "The winner is Player 1";
-                winnerName.style.display = 'block';
+                setTimeout(() => {
+                    winnerName.style.display = 'block';
+                }, 500)
                 canvas.removeEventListener('mousedown',addSymbol)
                 return;
             }
             // if the game draws
             else if (board.isOver()) {
-                console.log("Draw");
                 winnerName.textContent = "DRAW";
-                winnerName.style.display = 'block';
+                setTimeout(() => {
+                    winnerName.style.display = 'block';
+                }, 500)
                 canvas.removeEventListener('mousedown',addSymbol)
                 return;
             }
@@ -117,17 +119,19 @@ canvas.addEventListener('mousedown', function addSymbol() {
                 // check if circle wins
                 // if winner, then stop the game and declare winner
                 if (board.checkWinner(-1) != 0) {
-                    console.log("Winner is Computer");
                     winnerName.textContent = "The winner is Computer";
-                    winnerName.style.display = 'block';
+                    setTimeout(() => {
+                        winnerName.style.display = 'block';
+                    }, 500)
                     canvas.removeEventListener('mousedown',addSymbol)
                     return;
                 }
                 // if the game draws
                 else if (board.isOver()) {
-                    console.log("Draw");
                     winnerName.textContent = "DRAW";
-                    winnerName.style.display = 'block';
+                    setTimeout(() => {
+                        winnerName.style.display = 'block';
+                    }, 500)
                     canvas.removeEventListener('mousedown',addSymbol)
                     return;
                 }
