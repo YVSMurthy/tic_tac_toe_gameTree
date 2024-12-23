@@ -7,34 +7,28 @@ export class Grid {
     }
 
     getGridLines(n) {
-        let gridLines = {
-            l1: {
-                x1: this.x+this.width/n,
+        let gridLines = [];
+
+        // Vertical lines
+        for (let i = 1; i < n; i++) {
+            let x = this.x + (i * this.width) / n;
+            gridLines.push({
+                x1: x,
                 y1: this.y,
-                x2: this.x+this.width/n,
-                y2: this.y+this.height
-            },
-        
-            l2: {
-                x1: this.x+(2*this.width)/n,
-                y1: this.y,
-                x2: this.x+(2*this.width)/n,
-                y2: this.y+this.height
-            },
-        
-            l3: {
+                x2: x,
+                y2: this.y + this.height,
+            });
+        }
+
+        // Horizontal lines
+        for (let i = 1; i < n; i++) {
+            let y = this.y + (i * this.height) / n;
+            gridLines.push({
                 x1: this.x,
-                y1: this.y+this.height/n,
-                x2: this.x+this.width,
-                y2: this.y+this.height/n
-            },
-        
-            l4: {
-                x1: this.x,
-                y1: this.y+(2*this.height)/n,
-                x2: this.x+this.width,
-                y2: this.y+(2*this.height)/n
-            }
+                y1: y,
+                x2: this.x + this.width,
+                y2: y,
+            });
         }
 
         return gridLines;

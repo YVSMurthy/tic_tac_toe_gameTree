@@ -7,106 +7,111 @@ let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
 let winnerName = document.getElementById("winner");
+let btn3 = document.getElementById("btn3");
+let btn4 = document.getElementById("btn4");
+let btn5 = document.getElementById("btn5");
 
 // making the tic tac toe board design ---------------------------------------------------------------------------------
 
 let grid = new Grid(50, 50, 500, 500);
 let n = 3;
-let gridLines = grid.getGridLines(n);
-ctx.lineWidth = 3;
+let board = new Board(n);
+let chance = 1;
+ctx.lineWidth = 2;
+let cursor = { x: 0, y: 0 };
 
-ctx.moveTo(gridLines.l1.x1, gridLines.l1.y1);
-ctx.lineTo(gridLines.l1.x2, gridLines.l1.y2);
+// function to create a new board and grid
+function drawGrid(gridSize) {
+    n = gridSize;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    winnerName.style.display = 'none';
 
-ctx.moveTo(gridLines.l2.x1, gridLines.l2.y1);
-ctx.lineTo(gridLines.l2.x2, gridLines.l2.y2);
+    // Draw grid lines
+    let gridLines = grid.getGridLines(n);
+    gridLines.forEach(line => {
+        ctx.beginPath();
+        ctx.moveTo(line.x1, line.y1);
+        ctx.lineTo(line.x2, line.y2);
+        ctx.stroke();
+    });
 
-ctx.moveTo(gridLines.l3.x1, gridLines.l3.y1);
-ctx.lineTo(gridLines.l3.x2, gridLines.l3.y2);
-
-ctx.moveTo(gridLines.l4.x1, gridLines.l4.y1);
-ctx.lineTo(gridLines.l4.x2, gridLines.l4.y2);
-
-ctx.stroke();
-
-// ---------------------------------------------------------------------------------------------------------------------
-// constant declarations -----------------------------------------------------------------------------------------------
-
-let cursor = {
-    x: 0,
-    y: 0
+    // Reset the game state
+    board = new Board(n);
+    chance = 1;
 }
-let chance = 1
 
-let board = (new Board(n)); 
+// event listner attachment function -----------------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------------------------------------------------
+function attachCanvasListeners() {
+    // Remove any existing event listeners to avoid duplicates
+    canvas.removeEventListener('mousedown', addSymbol);
+
+    // Attach the event listener for handling clicks
+    canvas.addEventListener('mousedown', addSymbol);
+}
+
+function startNewGame(gridSize) {
+    drawGrid(gridSize);
+    attachCanvasListeners();
+}
+
+// default game mode
+startNewGame(3);
+
 // updating current cursor positions dynamically -----------------------------------------------------------------------
 
 canvas.addEventListener('mousemove', (event) => {
     let rect = canvas.getBoundingClientRect();
     cursor.x = event.clientX - rect.left;
     cursor.y = event.clientY - rect.top;
-})
+});
 
-// ---------------------------------------------------------------------------------------------------------------------
 // logic for displaying the X or O symbol if clicked on the canvas -----------------------------------------------------
 
-canvas.addEventListener('mousedown', function addSymbol() {
-    if (cursor.x >= grid.x && cursor.x <= grid.x+grid.width 
-        && cursor.y >= grid.y && cursor.y <= grid.y+grid.height) {
+function addSymbol() {
+    if (cursor.x >= grid.x && cursor.x <= grid.x + grid.width 
+        && cursor.y >= grid.y && cursor.y <= grid.y + grid.height) {
 
-        // finding the row and column offset
-        let col = Math.floor(((cursor.x-grid.x) * 3) / grid.width);
-        let row = Math.floor(((cursor.y-grid.y) * 3) / grid.width);
+        // Calculate row and column indices
+        let col = Math.floor(((cursor.x - grid.x) * n) / grid.width);
+        let row = Math.floor(((cursor.y - grid.y) * n) / grid.height);
 
-        // if that place is empty then only fill
-        if (board.getElem(row, col) == 0) {
-
-            // cross chance
-            let shape1 = new Cross(50+(col*grid.width)/3, 50+(grid.width*row)/3, grid.width/3);
+        // Check if the cell is empty
+        if (board.getElem(row, col) === 0) {
+            // Draw cross for player
+            let shape1 = new Cross(50 + (col * grid.width) / n, 50 + (grid.width * row) / n, grid.width / n);
             let cross = shape1.getShape();
 
             ctx.moveTo(cross.l1.x1, cross.l1.y1);
             ctx.lineTo(cross.l1.x2, cross.l1.y2);
             ctx.moveTo(cross.l2.x1, cross.l2.y1);
             ctx.lineTo(cross.l2.x2, cross.l2.y2);
-            ctx.stroke()
+            ctx.stroke();
 
             board.updateBoard(row, col, chance);
             chance = -1;
 
-            // check if cross wins
-            // if winner, then stop the game and declare winner
-            if (board.checkWinner(1) != 0) {
+            // Check for winner or draw
+            if (board.checkWinner(1) !== 0) {
                 winnerName.textContent = "The winner is Player 1";
-                setTimeout(() => {
-                    winnerName.style.display = 'block';
-                }, 500)
-                canvas.removeEventListener('mousedown',addSymbol)
+                winnerName.style.display = 'block';
+                canvas.removeEventListener('mousedown', addSymbol);
                 return;
             }
-            // if the game draws
-            else if (board.isOver()) {
+            if (board.isOver()) {
                 winnerName.textContent = "DRAW";
-                setTimeout(() => {
-                    winnerName.style.display = 'block';
-                }, 500)
-                canvas.removeEventListener('mousedown',addSymbol)
+                winnerName.style.display = 'block';
+                canvas.removeEventListener('mousedown', addSymbol);
                 return;
             }
 
-
-            // give a small gap to give nice thinking like gap
+            // Computer's turn
             setTimeout(() => {
-                // Now circle (computer's chance)
-                // find the best move for current scenario
                 let gameTreeClassifier = new GameTreeClassifier(board.board, n);
-                // calculating best move based on minimax
                 gameTreeClassifier.alphabeta();
                 let bestMove = gameTreeClassifier.getBestMoves();
 
-                let shape2 = new Circle(50+(bestMove.col*grid.width)/3, 50+(grid.width*bestMove.row)/3, grid.width/3);
+                let shape2 = new Circle(50 + (bestMove.col * grid.width) / n, 50 + (grid.width * bestMove.row) / n, grid.width / n);
                 let circle = shape2.getShape();
 
                 ctx.beginPath();
@@ -116,28 +121,39 @@ canvas.addEventListener('mousedown', function addSymbol() {
                 board.updateBoard(bestMove.row, bestMove.col, chance);
                 chance = 1;
 
-                // check if circle wins
-                // if winner, then stop the game and declare winner
-                if (board.checkWinner(-1) != 0) {
+                // Check for winner or draw
+                if (board.checkWinner(-1) !== 0) {
                     winnerName.textContent = "The winner is Computer";
-                    setTimeout(() => {
-                        winnerName.style.display = 'block';
-                    }, 500)
-                    canvas.removeEventListener('mousedown',addSymbol)
+                    winnerName.style.display = 'block';
+                    canvas.removeEventListener('mousedown', addSymbol);
                     return;
                 }
-                // if the game draws
-                else if (board.isOver()) {
+                if (board.isOver()) {
                     winnerName.textContent = "DRAW";
-                    setTimeout(() => {
-                        winnerName.style.display = 'block';
-                    }, 500)
-                    canvas.removeEventListener('mousedown',addSymbol)
+                    winnerName.style.display = 'block';
+                    canvas.removeEventListener('mousedown', addSymbol);
                     return;
                 }
-            }, 1000)
+            }, 1000);
         }
     }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------------------------------------------------
+// event listners to dynamically change the grid size and game type ----------------------------------------------------
+
+btn3.addEventListener('mousedown', () => {
+    startNewGame(3);
+})
+
+btn4.addEventListener('mousedown', () => {
+    startNewGame(4);
+})
+
+btn5.addEventListener('mousedown', () => {
+    startNewGame(5);
 })
 
 // ---------------------------------------------------------------------------------------------------------------------
