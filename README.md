@@ -2,7 +2,10 @@
 
 A dynamic and interactive Tic-Tac-Toe game built with JavaScript, HTML5 Canvas, and CSS. The game supports various grid sizes (3x3, 4x4, 5x5) and features a challenging AI opponent powered by the Minimax algorithm with Alpha-Beta Pruning.
 
-![Tic-Tac-Toe Game](https://github.com/user-attachments/assets/22c6038b-f05e-4a57-b621-93cecd0827f7)
+<div align='center' style="marginTop: 10;">
+    <img src="https://github.com/user-attachments/assets/22c6038b-f05e-4a57-b621-93cecd0827f7" alt="Main Screen" width="400"/>
+</div>
+
 
 ## Features
 
@@ -11,7 +14,9 @@ A dynamic and interactive Tic-Tac-Toe game built with JavaScript, HTML5 Canvas, 
 - **Smart AI Opponent:** The AI uses Alpha-Beta Pruning to determine the best moves up to a depth of 2
 - **Game States:** Detects winner, draw, and game over conditions dynamically
 
-![Game Size Selection](https://github.com/user-attachments/assets/1a54f11b-6912-4618-9ff0-d809db3e3695)
+<div align='center' style="marginTop: 10;">
+    <img src="https://github.com/user-attachments/assets/1a54f11b-6912-4618-9ff0-d809db3e3695" alt="Main Screen" width="400"/>
+</div>
 
 ## Table of Contents
 
@@ -69,23 +74,6 @@ This project is built with vanilla JavaScript, HTML, and CSS. No build tools or 
 4. The AI will automatically respond with an "O" marker
 5. Continue until a winner is determined or the game ends in a draw
 6. Use the "New Game" button to start over
-
-## Project Structure
-
-```
-tic-tac-toe-engine/
-├── index.html          # Main HTML file
-├── css/
-│   └── style.css       # Game styling
-├── js/
-│   ├── main.js         # Entry point and game initialization
-│   ├── Grid.js         # Grid rendering and management
-│   ├── Board.js        # Game state and logic
-│   ├── GameTree.js     # AI decision tree with Alpha-Beta Pruning
-│   └── utils.js        # Helper functions
-└── assets/
-    └── images/         # Game icons and visuals
-```
 
 ## Technologies Used
 
