@@ -50,7 +50,7 @@ Choose between 3x3, 4x4, and 5x5 grids using intuitive buttons.
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/tic-tac-toe-engine.git
+git clone https://github.com/YVSMurthy/tic_tac_toe_gameTree.git
 cd tic-tac-toe-engine
 ```
 
